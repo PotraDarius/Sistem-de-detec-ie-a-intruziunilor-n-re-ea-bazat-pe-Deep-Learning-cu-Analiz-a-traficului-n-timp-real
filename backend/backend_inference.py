@@ -1,7 +1,7 @@
 """
-backend_inference.py — 1D-CNN inference engine (calibrated)
+backend_inference.py — 1D-CNN inference engine
 ============================================================
-Versiune cu calibrare prin threshold pe confidența softmax:
+Calibrare prin threshold pe confidența softmax:
 predicțiile de atac cu confidență sub CONFIDENCE_THRESHOLD sunt
 reetichetate "Suspicious", semnalând că modelul nu e sigur de
 sub-clasă (cazul tipic al traficului out-of-distribution).

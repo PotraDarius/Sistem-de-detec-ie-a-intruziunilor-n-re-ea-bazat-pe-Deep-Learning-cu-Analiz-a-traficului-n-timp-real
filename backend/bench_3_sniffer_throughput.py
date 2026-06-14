@@ -31,8 +31,8 @@ TARGET_IP = "192.168.56.101"
 TARGET_PORT = 80
 INTERFACE = "eth1"
 
-DURATION_SEC = 30        # cât rulează hping3
-PACKET_RATE = 200        # pachete/sec (hping3 -i u5000 = 200/sec; mai mare = stress mai mare)
+DURATION_SEC = 30        
+PACKET_RATE = 200        
 
 print("=" * 70)
 print("Test 3: Throughput sniffer sub trafic TCP real")
@@ -43,7 +43,6 @@ print(f"  Durată     : {DURATION_SEC} secunde")
 print(f"  Rate hping3: ~{PACKET_RATE} pachete/sec")
 print()
 
-# Verifică că sniffer-ul e activ
 try:
     r = requests.get(f"{API_BASE}/api/stats", timeout=2)
     stats_before = r.json()
@@ -59,14 +58,13 @@ print(f"   Fluxuri procesate: {stats_before['totalFlows']}")
 print(f"   Pachete           : {stats_before['totalPackets']}")
 print()
 
-# Calcul interval hping3 pentru rate dorit
 interval_us = int(1_000_000 / PACKET_RATE)
 hping_cmd = [
     "sudo", "hping3",
-    "-S",              # SYN flag
+    "-S",              
     "-p", str(TARGET_PORT),
-    "-i", f"u{interval_us}",  # interval în microsecunde
-    "-c", str(PACKET_RATE * DURATION_SEC),  # număr total de pachete
+    "-i", f"u{interval_us}",  
+    "-c", str(PACKET_RATE * DURATION_SEC),  
     TARGET_IP
 ]
 
@@ -79,11 +77,9 @@ proc.wait()
 t_end = time.time()
 elapsed = t_end - t_start
 
-# Așteaptă 2 secunde să se proceseze ultimele fluxuri
 print("⏳ Aștept 2 secunde pentru finalizarea procesării...")
 time.sleep(2)
 
-# Citire stare după
 r = requests.get(f"{API_BASE}/api/stats", timeout=2)
 stats_after = r.json()
 
@@ -100,7 +96,6 @@ print(f"  Throughput fluxuri        : {flows_delta / elapsed:.1f} fluxuri/sec")
 print(f"  Throughput pachete        : {packets_delta / elapsed:.1f} pachete/sec")
 print(f"  Pachete medii per flux    : {packets_delta / max(flows_delta, 1):.2f}")
 
-# Salvare în text pentru include în raport
 with open("bench_3_results.txt", "w") as f:
     f.write(f"Test 3: Throughput sniffer\n")
     f.write(f"==========================\n")

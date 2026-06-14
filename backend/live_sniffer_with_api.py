@@ -71,9 +71,9 @@ CSV_HEADER = [
 # ─────────────────────────────────────────────────────────────────────────────
 state_lock = threading.Lock()
 
-sniffer_running = False        # pornit explicit prin /api/start
+sniffer_running = False        
 sniffer_thread  = None
-current_log_file = None        # path-ul sesiunii curente (None înainte de prima sesiune)
+current_log_file = None        
 
 recent_flows = deque(maxlen=FEED_RING_SIZE)
 class_counts = defaultdict(int)
@@ -86,7 +86,7 @@ os.makedirs(LOG_DIR, exist_ok=True)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# RESET STATE (apelat la start și la stop pentru sesiune curată)
+# RESET STATE
 # ─────────────────────────────────────────────────────────────────────────────
 def reset_backend_state():
     """Golește toată memoria de sesiune (feed, contoare, timeline, fluxuri active)."""
@@ -128,7 +128,6 @@ def _record_flow(flow_dict, prediction, confidence, packet_count):
         totals["flows"]    += 1
         totals["packets"]  += packet_count
         totals["conf_sum"] += confidence
-        # Suspicious nu se contabilizează ca atac confirmat (e doar incertitudine)
         if prediction not in ("Normal", "Suspicious"):
             totals["alerts"] += 1
 
@@ -137,9 +136,7 @@ def _record_flow(flow_dict, prediction, confidence, packet_count):
         if prediction == "Normal":
             bucket["normal"] += 1
         elif prediction != "Suspicious":
-            # Doar atacurile confirmate ajung pe linia roșie din timeline
             bucket["attacks"] += 1
-        # Suspicious nu se desenează pe timeline (ar fi distractor vizual)
 
         if len(timeline_buckets) > TIMELINE_MAX_BUCKETS * 2:
             cutoff = key - TIMELINE_MAX_BUCKETS * TIMELINE_BUCKET_SEC
@@ -233,7 +230,6 @@ def process_packet(packet):
             print(f"    ├─ Detalii: {total_pkts} pachete în {duration_ms} ms", flush=True)
             print(f"    └─ Confidență AI: {probabilitate:.2f}%\n", flush=True)
 
-        # Scrie în fișierul sesiunii curente (dacă există)
         if current_log_file:
             with open(current_log_file, mode="a", newline="") as f:
                 csv.writer(f).writerow([
@@ -281,7 +277,6 @@ def run_sniffer(iface_to_sniff):
 app = Flask(__name__)
 CORS(app)
 
-# Inițializare auth (SQLAlchemy + blueprint /api/auth/*)
 init_auth(app)
 
 
@@ -339,13 +334,10 @@ def api_start():
     data = request.get_json(silent=True) or {}
     selected_iface = data.get("interface", INTERFACE)
 
-    # 1. Reset sesiune (memorie + state)
     reset_backend_state()
 
-    # 2. Fișier nou de log
     log_path = start_new_log_session()
 
-    # 3. Pornire sniffer
     sniffer_running = True
     sniffer_thread = threading.Thread(
         target=run_sniffer, args=(selected_iface,), daemon=True
@@ -363,11 +355,9 @@ def api_stop():
     global sniffer_running
     sniffer_running = False
 
-    # Așteaptă thread-ul să se închidă (max ~2s, are timeout=1 în sniff loop)
     if sniffer_thread is not None:
         sniffer_thread.join(timeout=2.5)
 
-    # Reset memorie ca frontend-ul să primească 0/[]
     reset_backend_state()
 
     return jsonify({

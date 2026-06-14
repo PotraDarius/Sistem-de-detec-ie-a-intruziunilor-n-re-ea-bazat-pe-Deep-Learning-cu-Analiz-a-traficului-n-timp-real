@@ -1,8 +1,7 @@
 """
 prepare_artifacts.py — pregătire one-time
 =========================================
-Generează scaler.pkl și label_encoder.pkl pe care backend_inference.py
-le va încărca direct în Docker.
+Generează scaler.pkl și label_encoder.pkl
 """
 
 import os

@@ -35,7 +35,6 @@ print("=" * 70)
 print(f"  Iterații per endpoint: {NUM_ITERATIONS} (+ {WARMUP} warmup)")
 print()
 
-# Verifică conectivitate
 try:
     r = requests.get(f"{API_BASE}/api/health", timeout=2)
     r.raise_for_status()
@@ -49,11 +48,9 @@ for endpoint, method in ENDPOINTS:
     url = f"{API_BASE}{endpoint}"
     print(f"📡 Testare {method} {endpoint}")
 
-    # Warmup
     for _ in range(WARMUP):
         requests.get(url, timeout=5)
 
-    # Măsurătoare
     latencies_ms = []
     for _ in range(NUM_ITERATIONS):
         t0 = time.perf_counter()
@@ -81,7 +78,6 @@ for endpoint, method in ENDPOINTS:
           f"p99={summary['p99']:.2f}ms  max={summary['max']:.2f}ms")
     print()
 
-# Salvare CSV cu sumar
 with open("bench_4_results.csv", "w", newline="") as f:
     writer = csv.writer(f)
     writer.writerow(["endpoint", "min_ms", "mean_ms", "median_ms", "p95_ms", "p99_ms", "max_ms"])

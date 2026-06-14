@@ -1,0 +1,296 @@
+[
+  {
+    "timestamp": "2026-05-21T19:25:51.906Z",
+    "total_ms": 301,
+    "fetch_ms": 276,
+    "parse_ms": 25,
+    "setstate_ms": 0
+  },
+  {
+    "timestamp": "2026-05-21T19:25:52.386Z",
+    "total_ms": 439,
+    "fetch_ms": 428,
+    "parse_ms": 10,
+    "setstate_ms": 1
+  },
+  {
+    "timestamp": "2026-05-21T19:25:54.496Z",
+    "total_ms": 45,
+    "fetch_ms": 44,
+    "parse_ms": 1,
+    "setstate_ms": 0
+  },
+  {
+    "timestamp": "2026-05-21T19:25:57.069Z",
+    "total_ms": 117,
+    "fetch_ms": 113,
+    "parse_ms": 4,
+    "setstate_ms": 0
+  },
+  {
+    "timestamp": "2026-05-21T19:25:59.512Z",
+    "total_ms": 59,
+    "fetch_ms": 53,
+    "parse_ms": 6,
+    "setstate_ms": 0
+  },
+  {
+    "timestamp": "2026-05-21T19:26:02.001Z",
+    "total_ms": 47,
+    "fetch_ms": 44,
+    "parse_ms": 3,
+    "setstate_ms": 0
+  },
+  {
+    "timestamp": "2026-05-21T19:26:04.517Z",
+    "total_ms": 100,
+    "fetch_ms": 80,
+    "parse_ms": 20,
+    "setstate_ms": 0
+  },
+  {
+    "timestamp": "2026-05-21T19:26:04.609Z",
+    "total_ms": 60,
+    "fetch_ms": 59,
+    "parse_ms": 1,
+    "setstate_ms": 0
+  },
+  {
+    "timestamp": "2026-05-21T19:26:04.677Z",
+    "total_ms": 52,
+    "fetch_ms": 51,
+    "parse_ms": 1,
+    "setstate_ms": 0
+  },
+  {
+    "timestamp": "2026-05-21T19:26:07.175Z",
+    "total_ms": 46,
+    "fetch_ms": 44,
+    "parse_ms": 2,
+    "setstate_ms": 0
+  },
+  {
+    "timestamp": "2026-05-21T19:26:09.679Z",
+    "total_ms": 49,
+    "fetch_ms": 48,
+    "parse_ms": 1,
+    "setstate_ms": 0
+  },
+  {
+    "timestamp": "2026-05-21T19:26:12.179Z",
+    "total_ms": 49,
+    "fetch_ms": 48,
+    "parse_ms": 1,
+    "setstate_ms": 0
+  },
+  {
+    "timestamp": "2026-05-21T19:26:14.695Z",
+    "total_ms": 55,
+    "fetch_ms": 54,
+    "parse_ms": 1,
+    "setstate_ms": 0
+  },
+  {
+    "timestamp": "2026-05-21T19:26:17.290Z",
+    "total_ms": 150,
+    "fetch_ms": 149,
+    "parse_ms": 1,
+    "setstate_ms": 0
+  },
+  {
+    "timestamp": "2026-05-21T19:26:19.699Z",
+    "total_ms": 58,
+    "fetch_ms": 56,
+    "parse_ms": 2,
+    "setstate_ms": 0
+  },
+  {
+    "timestamp": "2026-05-21T19:26:22.198Z",
+    "total_ms": 57,
+    "fetch_ms": 56,
+    "parse_ms": 1,
+    "setstate_ms": 0
+  },
+  {
+    "timestamp": "2026-05-21T19:26:24.703Z",
+    "total_ms": 61,
+    "fetch_ms": 59,
+    "parse_ms": 2,
+    "setstate_ms": 0
+  },
+  {
+    "timestamp": "2026-05-21T19:26:27.198Z",
+    "total_ms": 55,
+    "fetch_ms": 54,
+    "parse_ms": 1,
+    "setstate_ms": 0
+  },
+  {
+    "timestamp": "2026-05-21T19:26:29.698Z",
+    "total_ms": 55,
+    "fetch_ms": 53,
+    "parse_ms": 2,
+    "setstate_ms": 0
+  },
+  {
+    "timestamp": "2026-05-21T19:26:32.193Z",
+    "total_ms": 49,
+    "fetch_ms": 47,
+    "parse_ms": 2,
+    "setstate_ms": 0
+  },
+  {
+    "timestamp": "2026-05-21T19:26:34.705Z",
+    "total_ms": 61,
+    "fetch_ms": 55,
+    "parse_ms": 6,
+    "setstate_ms": 0
+  },
+  {
+    "timestamp": "2026-05-21T19:26:37.190Z",
+    "total_ms": 46,
+    "fetch_ms": 45,
+    "parse_ms": 1,
+    "setstate_ms": 0
+  },
+  {
+    "timestamp": "2026-05-21T19:26:39.698Z",
+    "total_ms": 52,
+    "fetch_ms": 51,
+    "parse_ms": 1,
+    "setstate_ms": 0
+  },
+  {
+    "timestamp": "2026-05-21T19:26:42.196Z",
+    "total_ms": 49,
+    "fetch_ms": 47,
+    "parse_ms": 2,
+    "setstate_ms": 0
+  },
+  {
+    "timestamp": "2026-05-21T19:26:44.694Z",
+    "total_ms": 47,
+    "fetch_ms": 46,
+    "parse_ms": 1,
+    "setstate_ms": 0
+  },
+  {
+    "timestamp": "2026-05-21T19:26:47.194Z",
+    "total_ms": 47,
+    "fetch_ms": 45,
+    "parse_ms": 2,
+    "setstate_ms": 0
+  },
+  {
+    "timestamp": "2026-05-21T19:26:49.700Z",
+    "total_ms": 51,
+    "fetch_ms": 51,
+    "parse_ms": 0,
+    "setstate_ms": 0
+  },
+  {
+    "timestamp": "2026-05-21T19:26:52.230Z",
+    "total_ms": 67,
+    "fetch_ms": 65,
+    "parse_ms": 2,
+    "setstate_ms": 0
+  },
+  {
+    "timestamp": "2026-05-21T19:26:54.718Z",
+    "total_ms": 54,
+    "fetch_ms": 52,
+    "parse_ms": 1,
+    "setstate_ms": 0
+  },
+  {
+    "timestamp": "2026-05-21T19:26:57.215Z",
+    "total_ms": 44,
+    "fetch_ms": 42,
+    "parse_ms": 2,
+    "setstate_ms": 0
+  },
+  {
+    "timestamp": "2026-05-21T19:26:59.737Z",
+    "total_ms": 65,
+    "fetch_ms": 64,
+    "parse_ms": 1,
+    "setstate_ms": 0
+  },
+  {
+    "timestamp": "2026-05-21T19:27:01.533Z",
+    "total_ms": 115,
+    "fetch_ms": 113,
+    "parse_ms": 1,
+    "setstate_ms": 1
+  },
+  {
+    "timestamp": "2026-05-21T19:27:04.842Z",
+    "total_ms": 63,
+    "fetch_ms": 63,
+    "parse_ms": 0,
+    "setstate_ms": 0
+  },
+  {
+    "timestamp": "2026-05-21T19:27:08.033Z",
+    "total_ms": 322,
+    "fetch_ms": 311,
+    "parse_ms": 11,
+    "setstate_ms": 0
+  },
+  {
+    "timestamp": "2026-05-21T19:27:10.300Z",
+    "total_ms": 88,
+    "fetch_ms": 83,
+    "parse_ms": 3,
+    "setstate_ms": 2
+  },
+  {
+    "timestamp": "2026-05-21T19:27:12.763Z",
+    "total_ms": 41,
+    "fetch_ms": 40,
+    "parse_ms": 1,
+    "setstate_ms": 0
+  },
+  {
+    "timestamp": "2026-05-21T19:27:15.307Z",
+    "total_ms": 85,
+    "fetch_ms": 82,
+    "parse_ms": 3,
+    "setstate_ms": 0
+  },
+  {
+    "timestamp": "2026-05-21T19:27:17.776Z",
+    "total_ms": 54,
+    "fetch_ms": 52,
+    "parse_ms": 2,
+    "setstate_ms": 0
+  },
+  {
+    "timestamp": "2026-05-21T19:27:20.784Z",
+    "total_ms": 99,
+    "fetch_ms": 78,
+    "parse_ms": 20,
+    "setstate_ms": 1
+  },
+  {
+    "timestamp": "2026-05-21T19:27:23.772Z",
+    "total_ms": 65,
+    "fetch_ms": 63,
+    "parse_ms": 2,
+    "setstate_ms": 0
+  },
+  {
+    "timestamp": "2026-05-21T19:27:26.794Z",
+    "total_ms": 70,
+    "fetch_ms": 67,
+    "parse_ms": 3,
+    "setstate_ms": 0
+  },
+  {
+    "timestamp": "2026-05-21T19:27:29.300Z",
+    "total_ms": 76,
+    "fetch_ms": 72,
+    "parse_ms": 3,
+    "setstate_ms": 1
+  }
+]

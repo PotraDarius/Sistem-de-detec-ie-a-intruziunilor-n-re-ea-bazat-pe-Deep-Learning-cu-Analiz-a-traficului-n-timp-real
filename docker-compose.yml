@@ -1,0 +1,40 @@
+# NIDS Live Monitor - Docker Compose
+
+
+services:
+
+  # ─── Backend: sniffer Scapy + Flask API ─────────────────────────────────────
+  backend:
+    build: ./backend
+    container_name: nids-backend
+
+    network_mode: host
+    cap_add:
+      - NET_RAW       # raw sockets pentru capturare
+      - NET_ADMIN     # admin de rețea pentru sniffer
+    environment:
+      - NIDS_INTERFACE=eth0
+      - NIDS_LOG_DIR=/app/logs
+      - NIDS_API_HOST=0.0.0.0
+      - NIDS_API_PORT=5000
+      - NIDS_DB_PATH=/app/data/nids.db
+      - NIDS_JWT_SECRET=40f9eafa22a5ba541fd747d4728ae501ab6e9114d4c756bda4d82dacfffd0702
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./logs:/app/logs
+      - ./data:/app/data
+    restart: unless-stopped
+
+  # ─── Frontend: nginx servind build-ul Vite ──────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      args:
+
+        VITE_API_BASE: http://192.168.56.103:5000
+    container_name: nids-frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    restart: unless-stopped

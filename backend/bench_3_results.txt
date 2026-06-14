@@ -1,0 +1,9 @@
+Test 3: Throughput sniffer
+==========================
+Target            : 192.168.56.101:80
+Interfață         : eth1
+Durată trafic     : 42.32 secunde
+Fluxuri procesate : 3309
+Pachete procesate : 9852
+Throughput fluxuri: 78.2 fluxuri/sec
+Throughput pachete: 232.8 pachete/sec

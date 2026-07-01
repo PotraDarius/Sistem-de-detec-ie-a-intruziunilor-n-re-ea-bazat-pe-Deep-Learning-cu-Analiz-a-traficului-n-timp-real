@@ -11,6 +11,8 @@ import {
   User as UserIcon, LogOut, Settings
 } from 'lucide-react';
 import { AuthProvider, useAuth } from './AuthContext';
+import { ThemeProvider, useTheme } from './ThemeContext';
+import ThemeToggle from './ThemeToggle';
 import LoginPage from './LoginPage';
 import AccountPage from './AccountPage';
 
@@ -41,6 +43,20 @@ const ATTACK_KEYS = Object.keys(ATTACK_META);
 
 const isConfirmedAttack = (cls) => cls !== 'Normal' && cls !== 'Suspicious';
 const isNonNormal       = (cls) => cls !== 'Normal';
+
+// Culori pentru grafice (Recharts), în funcție de temă.
+function useChartTheme() {
+  const { isDark } = useTheme();
+  return isDark
+    ? {
+        tooltipBg: '#0a0a0a', tooltipBorder: '#27272a', tooltipText: '#e4e4e7', label: '#a1a1aa',
+        grid: '#1f1f23', axisTick: '#52525b', axisLine: '#27272a', pieStroke: '#09090b', cursor: '#3f3f46',
+      }
+    : {
+        tooltipBg: '#ffffff', tooltipBorder: '#e4e4e7', tooltipText: '#18181b', label: '#52525b',
+        grid: '#e4e4e7', axisTick: '#71717a', axisLine: '#d4d4d8', pieStroke: '#ffffff', cursor: '#a1a1aa',
+      };
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // MOCK DATA GENERATOR — realistic distributions matching a 1D-CNN NIDS
@@ -170,16 +186,16 @@ function useNIDSData() {
 
   const toggleSniffer = async () => {
     const nextState = !isSniffing;
-    setIsSniffing(nextState); 
+    setIsSniffing(nextState);
     if (backendOnline) {
       try {
         if (nextState) {
           setHasLog(false);
           setFeed([]);
-          await apiFetch(`/api/start`, { 
+          await apiFetch(`/api/start`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ interface: selectedIface }) 
+            body: JSON.stringify({ interface: selectedIface })
           });
         } else {
           await apiFetch(`/api/stop`, { method: 'POST' });
@@ -188,7 +204,7 @@ function useNIDSData() {
         }
       } catch (err) {
         console.error("Eroare toggle sniffer:", err);
-        setIsSniffing(!nextState); 
+        setIsSniffing(!nextState);
       }
     } else {
       if (nextState) {
@@ -231,7 +247,7 @@ function useNIDSData() {
         if (typeof sObj.hasLog === 'boolean') setHasLog(sObj.hasLog && !sObj.isSniffing);
         setBackendOnline(true);
         const t_end = performance.now();
-    
+
         window.__benchResults.push({
           timestamp: new Date().toISOString(),
           total_ms: +(t_end - t_start).toFixed(2),
@@ -309,18 +325,18 @@ function StatusDot({ online }) {
 
 function KpiCard({ icon: Icon, label, value, sub, accent = 'cyan', trend }) {
   const accentMap = {
-    cyan:    { border: 'border-cyan-500/30',    text: 'text-cyan-300',    iconBg: 'bg-cyan-500/10',    iconText: 'text-cyan-400'    },
-    rose:    { border: 'border-rose-500/40',    text: 'text-rose-300',    iconBg: 'bg-rose-500/10',    iconText: 'text-rose-400'    },
-    emerald: { border: 'border-emerald-500/30', text: 'text-emerald-300', iconBg: 'bg-emerald-500/10', iconText: 'text-emerald-400' },
-    amber:   { border: 'border-amber-500/30',   text: 'text-amber-300',   iconBg: 'bg-amber-500/10',   iconText: 'text-amber-400'   },
+    cyan:    { border: 'border-cyan-500/30',    text: 'text-cyan-700 dark:text-cyan-300',       iconBg: 'bg-cyan-500/10',    iconText: 'text-cyan-600 dark:text-cyan-400'    },
+    rose:    { border: 'border-rose-500/40',    text: 'text-rose-700 dark:text-rose-300',       iconBg: 'bg-rose-500/10',    iconText: 'text-rose-600 dark:text-rose-400'    },
+    emerald: { border: 'border-emerald-500/30', text: 'text-emerald-700 dark:text-emerald-300', iconBg: 'bg-emerald-500/10', iconText: 'text-emerald-600 dark:text-emerald-400' },
+    amber:   { border: 'border-amber-500/30',   text: 'text-amber-700 dark:text-amber-300',     iconBg: 'bg-amber-500/10',   iconText: 'text-amber-600 dark:text-amber-400'   },
   };
   const a = accentMap[accent];
   const TrendIcon = trend > 0 ? ArrowUpRight : trend < 0 ? ArrowDownRight : Minus;
-  const trendColor = trend > 0 ? 'text-emerald-400' : trend < 0 ? 'text-rose-400' : 'text-zinc-500';
+  const trendColor = trend > 0 ? 'text-emerald-500' : trend < 0 ? 'text-rose-500' : 'text-zinc-500';
 
   return (
-    <div className={`relative overflow-hidden rounded border ${a.border} bg-zinc-950/60 p-4 group transition-all hover:bg-zinc-950/80`}>
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-zinc-700 to-transparent" />
+    <div className={`relative overflow-hidden rounded border ${a.border} bg-white/70 dark:bg-zinc-950/60 p-4 group transition-all hover:bg-white dark:hover:bg-zinc-950/80`}>
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-zinc-300 dark:via-zinc-700 to-transparent" />
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.18em] text-zinc-500">
@@ -346,11 +362,11 @@ function KpiCard({ icon: Icon, label, value, sub, accent = 'cyan', trend }) {
 
 function SectionHeader({ icon: Icon, title, hint, right }) {
   return (
-    <div className="flex items-center justify-between px-4 py-2.5 border-b border-zinc-800/80 bg-zinc-950/40">
+    <div className="flex items-center justify-between px-4 py-2.5 border-b border-zinc-200 dark:border-zinc-800/80 bg-zinc-100/60 dark:bg-zinc-950/40">
       <div className="flex items-center gap-2">
         <Icon className="h-3.5 w-3.5 text-zinc-500" />
-        <h3 className="font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-300">{title}</h3>
-        {hint && <span className="font-mono text-[10px] text-zinc-600">{hint}</span>}
+        <h3 className="font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-700 dark:text-zinc-300">{title}</h3>
+        {hint && <span className="font-mono text-[10px] text-zinc-400 dark:text-zinc-600">{hint}</span>}
       </div>
       {right}
     </div>
@@ -361,6 +377,7 @@ function SectionHeader({ icon: Icon, title, hint, right }) {
 // CHARTS
 // ─────────────────────────────────────────────────────────────────────────────
 function ClassDistributionChart({ distribution }) {
+  const ct = useChartTheme();
   const data = useMemo(() => ATTACK_KEYS
     .map(k => ({ name: k, value: distribution?.[k] ?? 0, color: ATTACK_META[k].color }))
     .filter(d => d.value > 0)
@@ -382,23 +399,23 @@ function ClassDistributionChart({ distribution }) {
                 cx="50%" cy="50%"
                 innerRadius="55%" outerRadius="85%"
                 paddingAngle={2}
-                stroke="#09090b"
+                stroke={ct.pieStroke}
                 strokeWidth={2}
               >
                 {data.map((d, i) => <Cell key={i} fill={d.color} />)}
               </Pie>
               <Tooltip
                 contentStyle={{
-                  background: '#0a0a0a',
-                  border: '1px solid #27272a',
+                  background: ct.tooltipBg,
+                  border: `1px solid ${ct.tooltipBorder}`,
                   borderRadius: 4,
                   fontFamily: 'JetBrains Mono, monospace',
                   fontSize: 11,
-                  color: '#e4e4e7',
+                  color: ct.tooltipText,
                   padding: '6px 10px',
                 }}
-                itemStyle={{ color: '#e4e4e7' }}
-                labelStyle={{ color: '#a1a1aa' }}
+                itemStyle={{ color: ct.tooltipText }}
+                labelStyle={{ color: ct.label }}
                 formatter={(v, n) => [`${v} flows (${((v / total) * 100).toFixed(1)}%)`, n]}
               />
             </PieChart>
@@ -414,14 +431,14 @@ function ClassDistributionChart({ distribution }) {
                 <div className="flex items-center justify-between gap-2 py-1">
                   <div className="flex items-center gap-2 min-w-0">
                     <span className="h-2 w-2 rounded-sm shrink-0" style={{ background: meta.color }} />
-                    <span className="text-zinc-400 truncate">{k}</span>
+                    <span className="text-zinc-600 dark:text-zinc-400 truncate">{k}</span>
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
-                    <span className="text-zinc-600 text-[10px]">{pct.toFixed(1)}%</span>
-                    <span className="text-zinc-200 tabular-nums w-8 text-right">{v}</span>
+                    <span className="text-zinc-400 dark:text-zinc-600 text-[10px]">{pct.toFixed(1)}%</span>
+                    <span className="text-zinc-800 dark:text-zinc-200 tabular-nums w-8 text-right">{v}</span>
                   </div>
                 </div>
-                <div className="h-px bg-zinc-900 overflow-hidden">
+                <div className="h-px bg-zinc-200 dark:bg-zinc-900 overflow-hidden">
                   <div
                     className="h-full transition-all duration-700"
                     style={{ width: `${pct}%`, background: meta.color, boxShadow: `0 0 6px ${meta.color}` }}
@@ -437,6 +454,7 @@ function ClassDistributionChart({ distribution }) {
 }
 
 function TrafficTimelineChart({ timeline }) {
+  const ct = useChartTheme();
   return (
     <div className="flex flex-col h-full">
       <SectionHeader
@@ -445,11 +463,11 @@ function TrafficTimelineChart({ timeline }) {
         hint={`${TIMELINE_BUCKETS} × 5s windows`}
         right={
           <div className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-wider">
-            <span className="flex items-center gap-1.5 text-emerald-400">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> normal
+            <span className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400" /> normal
             </span>
-            <span className="flex items-center gap-1.5 text-rose-400">
-              <span className="h-1.5 w-1.5 rounded-full bg-rose-400" /> attacks
+            <span className="flex items-center gap-1.5 text-rose-600 dark:text-rose-400">
+              <span className="h-1.5 w-1.5 rounded-full bg-rose-500 dark:bg-rose-400" /> attacks
             </span>
           </div>
         }
@@ -467,29 +485,29 @@ function TrafficTimelineChart({ timeline }) {
                 <stop offset="100%" stopColor="#ef4444" stopOpacity={0.04} />
               </linearGradient>
             </defs>
-            <CartesianGrid stroke="#1f1f23" strokeDasharray="2 4" vertical={false} />
+            <CartesianGrid stroke={ct.grid} strokeDasharray="2 4" vertical={false} />
             <XAxis
               dataKey="time"
-              tick={{ fill: '#52525b', fontSize: 9, fontFamily: 'JetBrains Mono, monospace' }}
-              stroke="#27272a"
+              tick={{ fill: ct.axisTick, fontSize: 9, fontFamily: 'JetBrains Mono, monospace' }}
+              stroke={ct.axisLine}
               interval="preserveStartEnd"
               minTickGap={28}
             />
             <YAxis
-              tick={{ fill: '#52525b', fontSize: 9, fontFamily: 'JetBrains Mono, monospace' }}
-              stroke="#27272a"
+              tick={{ fill: ct.axisTick, fontSize: 9, fontFamily: 'JetBrains Mono, monospace' }}
+              stroke={ct.axisLine}
               width={32}
             />
             <Tooltip
               contentStyle={{
-                background: '#0a0a0a',
-                border: '1px solid #27272a',
+                background: ct.tooltipBg,
+                border: `1px solid ${ct.tooltipBorder}`,
                 borderRadius: 4,
                 fontFamily: 'JetBrains Mono, monospace',
                 fontSize: 11,
-                color: '#e4e4e7',
+                color: ct.tooltipText,
               }}
-              cursor={{ stroke: '#3f3f46', strokeWidth: 1, strokeDasharray: '3 3' }}
+              cursor={{ stroke: ct.cursor, strokeWidth: 1, strokeDasharray: '3 3' }}
             />
             <Area
               type="monotone"
@@ -520,13 +538,13 @@ function TrafficTimelineChart({ timeline }) {
 function ConfidenceBar({ value, color }) {
   return (
     <div className="flex items-center gap-2 font-mono text-[11px]">
-      <div className="relative h-1 w-14 rounded-sm bg-zinc-800 overflow-hidden">
+      <div className="relative h-1 w-14 rounded-sm bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
         <div
           className="absolute inset-y-0 left-0 transition-all"
           style={{ width: `${value}%`, background: color, boxShadow: `0 0 4px ${color}` }}
         />
       </div>
-      <span className="text-zinc-400 tabular-nums w-12 text-right">{value.toFixed(1)}%</span>
+      <span className="text-zinc-600 dark:text-zinc-400 tabular-nums w-12 text-right">{value.toFixed(1)}%</span>
     </div>
   );
 }
@@ -538,8 +556,8 @@ function FlowRow({ flow }) {
 
   return (
     <tr
-      className={`group border-b border-zinc-900/70 transition-colors ${
-        isAttack ? 'hover:bg-rose-950/20' : 'hover:bg-zinc-900/40'
+      className={`group border-b border-zinc-200 dark:border-zinc-900/70 transition-colors ${
+        isAttack ? 'hover:bg-rose-50 dark:hover:bg-rose-950/20' : 'hover:bg-zinc-100 dark:hover:bg-zinc-900/40'
       }`}
       style={isAttack ? { background: `linear-gradient(90deg, ${meta.glow} 0%, transparent 60%)` } : undefined}
     >
@@ -552,14 +570,14 @@ function FlowRow({ flow }) {
       <td className="px-2 py-2 font-mono text-[11px] text-zinc-500 tabular-nums whitespace-nowrap">
         {fmtTime(flow.ts)}
       </td>
-      <td className="px-2 py-2 font-mono text-[11px] text-zinc-300 tabular-nums whitespace-nowrap">
-        {flow.ipSrc}<span className="text-zinc-600">:{flow.portSrc}</span>
+      <td className="px-2 py-2 font-mono text-[11px] text-zinc-700 dark:text-zinc-300 tabular-nums whitespace-nowrap">
+        {flow.ipSrc}<span className="text-zinc-400 dark:text-zinc-600">:{flow.portSrc}</span>
       </td>
-      <td className="px-2 py-2 font-mono text-[11px] text-zinc-600 whitespace-nowrap">
+      <td className="px-2 py-2 font-mono text-[11px] text-zinc-400 dark:text-zinc-600 whitespace-nowrap">
         <ChevronRight className="h-3 w-3" />
       </td>
-      <td className="px-2 py-2 font-mono text-[11px] text-zinc-300 tabular-nums whitespace-nowrap">
-        {flow.ipDst}<span className="text-zinc-600">:{flow.portDst}</span>
+      <td className="px-2 py-2 font-mono text-[11px] text-zinc-700 dark:text-zinc-300 tabular-nums whitespace-nowrap">
+        {flow.ipDst}<span className="text-zinc-400 dark:text-zinc-600">:{flow.portDst}</span>
       </td>
       <td className="px-2 py-2 font-mono text-[10px] text-zinc-500 tabular-nums whitespace-nowrap">
         {flow.packets}p · {flow.durationMs}ms
@@ -597,18 +615,18 @@ function AlertFeed({ feed }) {
         hint={`${sorted.length} flows · ${attackCount} flagged · ${suspiciousCount} suspicious`}
         right={
           <div className="flex items-center gap-2 font-mono text-[10px] text-zinc-500">
-            <CircleDot className="h-2.5 w-2.5 text-rose-400 animate-pulse" />
+            <CircleDot className="h-2.5 w-2.5 text-rose-500 dark:text-rose-400 animate-pulse" />
             STREAMING
           </div>
         }
       />
       <div className="flex-1 overflow-auto custom-scroll">
         <table className="w-full text-left">
-          <thead className="sticky top-0 z-10 bg-zinc-950/95 backdrop-blur">
-            <tr className="border-b border-zinc-800">
+          <thead className="sticky top-0 z-10 bg-white/95 dark:bg-zinc-950/95 backdrop-blur">
+            <tr className="border-b border-zinc-200 dark:border-zinc-800">
               <th className="w-1"></th>
               {['Timestamp', 'Source', '', 'Destination', 'Flow Stats', 'Classification', 'Confidence'].map((h, i) => (
-                <th key={i} className="px-2 py-2 font-mono text-[9px] uppercase tracking-[0.18em] text-zinc-600 font-normal">
+                <th key={i} className="px-2 py-2 font-mono text-[9px] uppercase tracking-[0.18em] text-zinc-500 dark:text-zinc-600 font-normal">
                   {h}
                 </th>
               ))}
@@ -617,7 +635,7 @@ function AlertFeed({ feed }) {
           <tbody>
             {sorted.map(f => <FlowRow key={f.id} flow={f} />)}
             {sorted.length === 0 && (
-              <tr><td colSpan={8} className="px-4 py-8 text-center font-mono text-xs text-zinc-600">
+              <tr><td colSpan={8} className="px-4 py-8 text-center font-mono text-xs text-zinc-400 dark:text-zinc-600">
                 Awaiting traffic on monitored interface…
               </td></tr>
             )}
@@ -656,21 +674,21 @@ function Header({ backendOnline, throughput, isSniffing, toggleSniffer, interfac
   };
 
   return (
-    <header className="border-b border-zinc-800/80 bg-zinc-950/70">
+    <header className="border-b border-zinc-200 dark:border-zinc-800/80 bg-white/70 dark:bg-zinc-950/70">
       <div className="px-5 py-3 flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-4 min-w-0">
           <div className="relative">
             <div className="absolute inset-0 bg-cyan-500/20 blur-md rounded" />
-            <div className="relative h-9 w-9 rounded border border-cyan-500/40 bg-zinc-950 flex items-center justify-center">
-              <Shield className="h-4.5 w-4.5 text-cyan-400" strokeWidth={1.5} />
+            <div className="relative h-9 w-9 rounded border border-cyan-500/40 bg-white dark:bg-zinc-950 flex items-center justify-center">
+              <Shield className="h-4.5 w-4.5 text-cyan-500 dark:text-cyan-400" strokeWidth={1.5} />
             </div>
           </div>
           <div className="min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <h1 className="font-sans text-base font-semibold text-zinc-100 tracking-tight">
+              <h1 className="font-sans text-base font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight">
                 NIDS Live Monitor
               </h1>
-              <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-cyan-400/80 border border-cyan-500/30 rounded-sm px-1.5 py-0.5">
+              <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-cyan-600 dark:text-cyan-400/80 border border-cyan-500/30 rounded-sm px-1.5 py-0.5">
                 1D-CNN Engine
               </span>
             </div>
@@ -682,12 +700,12 @@ function Header({ backendOnline, throughput, isSniffing, toggleSniffer, interfac
 
         <div className="flex items-center gap-5 font-mono">
 
-          <button 
+          <button
             onClick={toggleSniffer}
             className={`flex items-center gap-2 px-3 py-1.5 rounded text-[11px] uppercase tracking-wider font-semibold transition-all border ${
-              isSniffing 
-                ? 'bg-rose-500/10 text-rose-400 border-rose-500/30 hover:bg-rose-500/20' 
-                : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20'
+              isSniffing
+                ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30 hover:bg-rose-500/20'
+                : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20'
             }`}
           >
             {isSniffing ? <Square className="h-3 w-3 fill-current" /> : <Play className="h-3 w-3 fill-current" />}
@@ -699,7 +717,7 @@ function Header({ backendOnline, throughput, isSniffing, toggleSniffer, interfac
             <button
               type="button"
               onClick={downloadLog}
-              className="flex items-center gap-2 px-3 py-1.5 rounded text-[11px] uppercase tracking-wider font-semibold transition-all border bg-cyan-500/10 text-cyan-300 border-cyan-500/30 hover:bg-cyan-500/20"
+              className="flex items-center gap-2 px-3 py-1.5 rounded text-[11px] uppercase tracking-wider font-semibold transition-all border bg-cyan-500/10 text-cyan-700 dark:text-cyan-300 border-cyan-500/30 hover:bg-cyan-500/20"
               title="Descarcă log-ul sesiunii anterioare (.csv)"
             >
               <Download className="h-3 w-3" />
@@ -707,14 +725,14 @@ function Header({ backendOnline, throughput, isSniffing, toggleSniffer, interfac
             </button>
           )}
 
-          <div className="hidden sm:flex items-center gap-2 border-l border-zinc-800 pl-5">
+          <div className="hidden sm:flex items-center gap-2 border-l border-zinc-200 dark:border-zinc-800 pl-5">
             <Network className="h-3.5 w-3.5 text-zinc-500" />
             <span className="text-[10px] uppercase tracking-wider text-zinc-500">IFACE</span>
             <select
               value={selectedIface}
               onChange={(e) => setSelectedIface(e.target.value)}
               disabled={isSniffing}
-              className={`bg-zinc-900 border border-zinc-700 text-xs text-zinc-300 rounded px-2 py-1 outline-none transition-colors ${
+              className={`bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 text-xs text-zinc-700 dark:text-zinc-300 rounded px-2 py-1 outline-none transition-colors ${
                 isSniffing ? 'opacity-50 cursor-not-allowed' : 'hover:border-cyan-500 focus:border-cyan-500 cursor-pointer'
               }`}
             >
@@ -727,46 +745,51 @@ function Header({ backendOnline, throughput, isSniffing, toggleSniffer, interfac
           <div className="hidden md:flex items-center gap-2">
             <Zap className="h-3.5 w-3.5 text-zinc-500" />
             <span className="text-[10px] uppercase tracking-wider text-zinc-500">RX</span>
-            <span className="text-xs text-cyan-300 tabular-nums">{throughput} Mbps</span>
+            <span className="text-xs text-cyan-700 dark:text-cyan-300 tabular-nums">{throughput} Mbps</span>
           </div>
 
           <div className="flex items-center gap-2">
             <StatusDot online={backendOnline} />
-            <span className="text-[10px] uppercase tracking-wider text-zinc-400">
+            <span className="text-[10px] uppercase tracking-wider text-zinc-600 dark:text-zinc-400">
               {backendOnline ? 'System Active' : 'Mock Mode'}
             </span>
           </div>
 
-          <div className="flex items-center gap-2 border-l border-zinc-800 pl-5">
+          <div className="flex items-center gap-2 border-l border-zinc-200 dark:border-zinc-800 pl-5">
             <span className="text-[10px] uppercase tracking-wider text-zinc-500">UTC</span>
-            <span className="text-sm text-zinc-100 tabular-nums">
+            <span className="text-sm text-zinc-900 dark:text-zinc-100 tabular-nums">
               {now.toISOString().slice(11, 19)}
             </span>
           </div>
 
+          {/* Theme toggle */}
+          <div className="flex items-center border-l border-zinc-200 dark:border-zinc-800 pl-5">
+            <ThemeToggle />
+          </div>
+
           {/* User menu */}
-          <div className="relative border-l border-zinc-800 pl-5">
+          <div className="relative border-l border-zinc-200 dark:border-zinc-800 pl-5">
             <button
               type="button"
               onClick={() => setMenuOpen(v => !v)}
-              className="flex items-center gap-2 px-2 py-1 rounded border border-zinc-700 bg-zinc-900/60 hover:border-cyan-500/60 hover:bg-zinc-900 transition-colors"
+              className="flex items-center gap-2 px-2 py-1 rounded border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900/60 hover:border-cyan-500/60 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors"
             >
-              <UserIcon className="h-3.5 w-3.5 text-cyan-400" />
-              <span className="text-xs text-zinc-200">{user?.username}</span>
+              <UserIcon className="h-3.5 w-3.5 text-cyan-500 dark:text-cyan-400" />
+              <span className="text-xs text-zinc-800 dark:text-zinc-200">{user?.username}</span>
             </button>
 
             {menuOpen && (
               <>
                 <div className="fixed inset-0 z-[100]" onClick={() => setMenuOpen(false)} />
-                <div className="fixed right-5 top-16 w-48 rounded border border-zinc-800 bg-zinc-950/95 shadow-xl z-[101] overflow-hidden">
-                  <div className="px-3 py-2 border-b border-zinc-800/80">
+                <div className="fixed right-5 top-16 w-48 rounded border border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-950/95 shadow-xl z-[101] overflow-hidden">
+                  <div className="px-3 py-2 border-b border-zinc-200 dark:border-zinc-800/80">
                     <div className="font-mono text-[10px] uppercase tracking-wider text-zinc-500">Signed in as</div>
-                    <div className="font-mono text-xs text-zinc-200 truncate">{user?.email}</div>
+                    <div className="font-mono text-xs text-zinc-800 dark:text-zinc-200 truncate">{user?.email}</div>
                   </div>
                   <button
                     type="button"
                     onClick={() => { setMenuOpen(false); onAccount(); }}
-                    className="w-full flex items-center gap-2 px-3 py-2 text-left text-xs text-zinc-300 hover:bg-zinc-900 transition-colors"
+                    className="w-full flex items-center gap-2 px-3 py-2 text-left text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
                   >
                     <Settings className="h-3.5 w-3.5 text-zinc-500" />
                     <span>Setări cont</span>
@@ -774,7 +797,7 @@ function Header({ backendOnline, throughput, isSniffing, toggleSniffer, interfac
                   <button
                     type="button"
                     onClick={() => { setMenuOpen(false); logout(); }}
-                    className="w-full flex items-center gap-2 px-3 py-2 text-left text-xs text-rose-300 hover:bg-rose-950/30 transition-colors border-t border-zinc-800/80"
+                    className="w-full flex items-center gap-2 px-3 py-2 text-left text-xs text-rose-600 dark:text-rose-300 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors border-t border-zinc-200 dark:border-zinc-800/80"
                   >
                     <LogOut className="h-3.5 w-3.5" />
                     <span>Logout</span>
@@ -797,7 +820,7 @@ function NIDSDashboard({ onAccount }) {
   const { feed, stats, timeline, backendOnline, isSniffing, toggleSniffer, interfaces, selectedIface, setSelectedIface, hasLog } = useNIDSData();
 
   return (
-    <div className="min-h-screen w-full bg-zinc-950 text-zinc-200 font-sans relative overflow-hidden">
+    <div className="min-h-screen w-full bg-zinc-50 text-zinc-800 dark:bg-zinc-950 dark:text-zinc-200 font-sans relative overflow-hidden">
       {/* Style block: fonts + scan-grid background */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
@@ -805,12 +828,14 @@ function NIDSDashboard({ onAccount }) {
         .font-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
         .custom-scroll::-webkit-scrollbar { width: 8px; height: 8px; }
         .custom-scroll::-webkit-scrollbar-track { background: transparent; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #27272a; border-radius: 4px; }
-        .custom-scroll::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #a1a1aa; border-radius: 4px; }
+        .custom-scroll::-webkit-scrollbar-thumb:hover { background: #71717a; }
+        .dark .custom-scroll::-webkit-scrollbar-thumb { background: #27272a; }
+        .dark .custom-scroll::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
         .grid-bg {
           background-image:
-            linear-gradient(to right, rgba(255,255,255,0.018) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(255,255,255,0.018) 1px, transparent 1px);
+            linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+            linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
           background-size: 32px 32px;
         }
       `}</style>
@@ -821,19 +846,19 @@ function NIDSDashboard({ onAccount }) {
            style={{ background: 'radial-gradient(ellipse at 20% 0%, rgba(34,211,238,0.05), transparent 60%), radial-gradient(ellipse at 80% 100%, rgba(244,63,94,0.04), transparent 50%)' }} />
 
       <div className="relative z-10">
-        <Header backendOnline={backendOnline} throughput={stats.throughputMbps} isSniffing={isSniffing} toggleSniffer={toggleSniffer} 
+        <Header backendOnline={backendOnline} throughput={stats.throughputMbps} isSniffing={isSniffing} toggleSniffer={toggleSniffer}
         interfaces={interfaces} selectedIface={selectedIface} setSelectedIface={setSelectedIface} hasLog={hasLog} onAccount={onAccount}/>
 
         <main className="p-4 lg:p-5 space-y-4 lg:space-y-5">
           {/* Banner when in mock mode */}
           {!backendOnline && (
-            <div className="flex items-center gap-3 rounded border border-amber-500/30 bg-amber-950/20 px-4 py-2 font-mono text-[11px] text-amber-300">
+            <div className="flex items-center gap-3 rounded border border-amber-500/30 bg-amber-50 dark:bg-amber-950/20 px-4 py-2 font-mono text-[11px] text-amber-700 dark:text-amber-300">
               <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
-              <span className="text-amber-200/80">
+              <span className="text-amber-700/90 dark:text-amber-200/80">
                 Backend offline — running on synthetic mock data. Start Flask API on
               </span>
-              <code className="text-amber-100">{API_BASE}</code>
-              <span className="text-amber-200/80">to stream live captures.</span>
+              <code className="text-amber-800 dark:text-amber-100">{API_BASE}</code>
+              <span className="text-amber-700/90 dark:text-amber-200/80">to stream live captures.</span>
             </div>
           )}
 
@@ -875,21 +900,21 @@ function NIDSDashboard({ onAccount }) {
 
           {/* Charts Row */}
           <section className="grid grid-cols-1 xl:grid-cols-5 gap-4 lg:gap-5">
-            <div className="xl:col-span-3 rounded border border-zinc-800/80 bg-zinc-950/40 overflow-hidden min-h-[340px] flex flex-col">
+            <div className="xl:col-span-3 rounded border border-zinc-200 dark:border-zinc-800/80 bg-white/70 dark:bg-zinc-950/40 overflow-hidden min-h-[340px] flex flex-col">
               <TrafficTimelineChart timeline={timeline} />
             </div>
-            <div className="xl:col-span-2 rounded border border-zinc-800/80 bg-zinc-950/40 overflow-hidden min-h-[340px] flex flex-col">
+            <div className="xl:col-span-2 rounded border border-zinc-200 dark:border-zinc-800/80 bg-white/70 dark:bg-zinc-950/40 overflow-hidden min-h-[340px] flex flex-col">
               <ClassDistributionChart distribution={stats.distribution} />
             </div>
           </section>
 
           {/* Live Feed */}
-          <section className="rounded border border-zinc-800/80 bg-zinc-950/40 overflow-hidden flex flex-col h-[520px]">
+          <section className="rounded border border-zinc-200 dark:border-zinc-800/80 bg-white/70 dark:bg-zinc-950/40 overflow-hidden flex flex-col h-[520px]">
             <AlertFeed feed={feed} />
           </section>
 
           {/* Footer */}
-          <footer className="flex items-center justify-between flex-wrap gap-2 pt-2 font-mono text-[10px] text-zinc-600 uppercase tracking-wider">
+          <footer className="flex items-center justify-between flex-wrap gap-2 pt-2 font-mono text-[10px] text-zinc-400 dark:text-zinc-600 uppercase tracking-wider">
             <span>nids · 1d-cnn</span>
             <span>build 0.4.7</span>
           </footer>
@@ -909,7 +934,7 @@ function AppRouter() {
 
   if (loading) {
     return (
-      <div className="min-h-screen w-full bg-zinc-950 text-zinc-500 flex items-center justify-center font-mono text-xs uppercase tracking-[0.2em]">
+      <div className="min-h-screen w-full bg-zinc-50 text-zinc-500 dark:bg-zinc-950 flex items-center justify-center font-mono text-xs uppercase tracking-[0.2em]">
         Initializing…
       </div>
     );
@@ -932,8 +957,10 @@ function AppRouter() {
 // ─────────────────────────────────────────────────────────────────────────────
 export default function App() {
   return (
-    <AuthProvider>
-      <AppRouter />
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <AppRouter />
+      </AuthProvider>
+    </ThemeProvider>
   );
 }

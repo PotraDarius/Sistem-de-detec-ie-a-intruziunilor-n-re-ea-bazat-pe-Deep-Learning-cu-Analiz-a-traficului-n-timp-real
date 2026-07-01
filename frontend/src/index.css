@@ -7,9 +7,24 @@ html, body, #root {
   margin: 0;
 }
 
+/* Variabile de temă — schimbate prin clasa .dark / .light de pe <html>. */
+:root,
+.dark {
+  --body-bg: #09090b;
+  --body-text: #e4e4e7;
+  --grid-line: rgba(255, 255, 255, 0.018);
+}
+
+.light {
+  --body-bg: #f4f4f5;
+  --body-text: #18181b;
+  --grid-line: rgba(2, 6, 23, 0.05);
+}
+
 body {
-  background: #09090b;
-  color: #e4e4e7;
+  background: var(--body-bg);
+  color: var(--body-text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
